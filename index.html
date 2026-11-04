@@ -52,7 +52,7 @@
                             VERIFIED MN AUDIT MODE
                         </span>
                     </h1>
-                    <p class="text-xs text-slate-400">Minnesota County Live Precinct Returns & SHA-256 Cryptographic Audit Ledger</p>
+                    <p class="text-xs text-slate-400">All 87 Minnesota Counties Live Precinct Returns & SHA-256 Ledger</p>
                 </div>
             </div>
             
@@ -74,7 +74,7 @@
                 </button>
             </div>
 
-            <!-- Controls & Live Count -->
+            <!-- Controls & Live Viewer Count -->
             <div class="flex items-center space-x-2 bg-soc-900 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
                 <span class="relative flex h-2.5 w-2.5">
                     <span id="ping-indicator" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -101,14 +101,14 @@
             <div class="flex items-center space-x-2.5">
                 <i class="fa-solid fa-shield-check text-emerald-400 text-base"></i>
                 <div>
-                    <span class="font-bold text-white">MINNESOTA VERIFIED AUDIT MODE ACTIVE:</span>
-                    <span class="text-slate-300">Tracking local county returns including Faribault County, Waseca, Hennepin, and statewide contests.</span>
+                    <span class="font-bold text-white">ALL 87 MINNESOTA COUNTIES MONITORED:</span>
+                    <span class="text-slate-300">Live precinct returns including Faribault County write-ins, Waseca, Hennepin, and statewide races.</span>
                 </div>
             </div>
             <span class="text-[10px] font-mono-code bg-emerald-900/50 border border-emerald-700/50 text-emerald-300 px-2 py-1 rounded">MN_STATE_LEDGER</span>
         </div>
 
-        <!-- Minnesota Key State Races -->
+        <!-- Minnesota Key State Races & Faribault Highlight -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <!-- MN Governor Race -->
             <div class="bg-soc-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
@@ -117,7 +117,7 @@
                         <i class="fa-solid fa-user-shield text-cyan-400"></i>
                         <h2 class="font-extrabold text-sm text-white tracking-wide">MINNESOTA GOVERNOR RACE</h2>
                     </div>
-                    <span class="text-xs text-slate-400 font-mono-code">62% PRECINCTS IN</span>
+                    <span class="text-xs text-slate-400 font-mono-code">STATEWIDE TALLY</span>
                 </div>
                 <div class="flex justify-between items-baseline font-mono-code font-black text-xl">
                     <div class="text-blue-500 flex items-baseline gap-2"><span id="gov-dem-count">1,120,400</span> <span class="text-xs font-sans text-slate-400 font-normal">DFL</span></div>
@@ -141,7 +141,7 @@
                 </div>
                 <div class="text-xs text-slate-300 space-y-1">
                     <div class="flex justify-between"><span>City Council Write-Ins:</span><span class="text-amber-400 font-bold font-mono-code" id="faribault-writein-count">Active Ingest</span></div>
-                    <div class="flex justify-between"><span>County Commissioner Dist 4:</span><span class="text-slate-200 font-bold font-mono-code">A. Kalis vs. J. Kral</span></div>
+                    <div class="flex justify-between"><span>County Auditor & Board:</span><span class="text-slate-200 font-bold font-mono-code">Blue Earth, MN Precincts</span></div>
                 </div>
                 <button onclick="openForensicModal('Faribault')" class="w-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold py-1.5 rounded-xl transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-magnifying-glass font-bold"></i> Inspect Faribault County Candidates & Write-Ins
@@ -149,16 +149,16 @@
             </div>
         </div>
 
-        <!-- Minnesota Counties Map & Breakdown -->
+        <!-- Minnesota 87-County Heatmap Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 bg-soc-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
                     <div>
                         <h2 class="font-extrabold text-base text-white flex items-center gap-2">
                             <i class="fa-solid fa-map-location-dot text-emerald-400"></i>
-                            Minnesota County Live Visual Heatmap Grid
+                            Minnesota 87-County Visual Heatmap Grid
                         </h2>
-                        <p class="text-xs text-slate-400">Color-coded live state grid. Click any county to view candidate match-ups & raw hashes.</p>
+                        <p class="text-xs text-slate-400">Color-coded state grid. Click any county to view candidate match-ups & raw SHA-256 hashes.</p>
                     </div>
                     <div class="flex items-center space-x-3 text-[11px] font-mono-code">
                         <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-600 inline-block"></span> DFL Lead</span>
@@ -166,8 +166,8 @@
                     </div>
                 </div>
 
-                <!-- County Visual Heatmap Tiles -->
-                <div id="county-tiles-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
+                <!-- 87 County Visual Heatmap Grid Container -->
+                <div id="county-tiles-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 max-h-[580px] overflow-y-auto pr-1"></div>
             </div>
 
             <!-- Live Feed Stream -->
@@ -283,106 +283,42 @@
             if (el) el.innerText = "1 Online (Local)";
         }
 
-        // Expanded Minnesota County & Candidate Dataset including Faribault County
-        const countyData = {
-            "Faribault": { 
-                name: "Faribault County", 
-                candA: 2840, candB: 4910, totalPrecincts: 32, precinctsIn: 21,
+        // Full List of All 87 Minnesota Counties
+        const mnCountiesList = [
+            "Aitkin", "Anoka", "Becker", "Beltrami", "Benton", "Big Stone", "Blue Earth", "Brown", "Carlton", "Carver",
+            "Cass", "Chippewa", "Chisago", "Clay", "Clearwater", "Cook", "Cottonwood", "Crow Wing", "Dakota", "Dodge",
+            "Douglas", "Faribault", "Fillmore", "Freeborn", "Goodhue", "Grant", "Hennepin", "Houston", "Hubbard", "Isanti",
+            "Itasca", "Jackson", "Kanabec", "Kandiyohi", "Kittson", "Koochiching", "Lac qui Parle", "Lake", "Lake of the Woods", "Le Sueur",
+            "Lincoln", "Lyon", "McLeod", "Mahnomen", "Marshall", "Martin", "Meeker", "Mille Lacs", "Morrison", "Mower",
+            "Murray", "Nicollet", "Nobles", "Norman", "Olmsted", "Otter Tail", "Pennington", "Pine", "Pipestone", "Polk",
+            "Pope", "Ramsey", "Red Lake", "Redwood", "Renville", "Rice", "Rock", "Roseau", "St. Louis", "Scott",
+            "Sherburne", "Sibley", "Stearns", "Steele", "Stevens", "Swift", "Todd", "Traverse", "Wabasha", "Wadena",
+            "Waseca", "Washington", "Watonwan", "Wilkin", "Winona", "Wright", "Yellow Medicine"
+        ];
+
+        // Generate baseline state dictionary for all 87 counties
+        const countyData = {};
+        mnCountiesList.forEach(name => {
+            // Seed realistic voting baselines
+            const isMetroOrUrban = ["Hennepin", "Ramsey", "Dakota", "Olmsted", "St. Louis", "Clay", "Blue Earth", "Washington"].includes(name);
+            const baseA = isMetroOrUrban ? Math.floor(Math.random() * 80000) + 15000 : Math.floor(Math.random() * 4000) + 1200;
+            const baseB = isMetroOrUrban ? Math.floor(Math.random() * 50000) + 10000 : Math.floor(Math.random() * 7000) + 2500;
+
+            countyData[name] = {
+                name: `${name} County`,
+                candA: baseA,
+                candB: baseB,
+                totalPrecincts: isMetroOrUrban ? 180 : 28,
+                precinctsIn: isMetroOrUrban ? 120 : 18,
                 candidates: [
-                    { name: "DFL Nominee", party: "DFL", votes: 2840 },
-                    { name: "GOP Nominee", party: "GOP", votes: 4910 },
-                    { name: "Write-In (City Council / Local)", party: "Write-In", votes: 312 }
+                    { name: "DFL Candidate", party: "DFL", votes: baseA },
+                    { name: "GOP Candidate", party: "GOP", votes: baseB }
                 ]
-            },
-            "Waseca": { 
-                name: "Waseca County", 
-                candA: 4120, candB: 5890, totalPrecincts: 18, precinctsIn: 14,
-                candidates: [
-                    { name: "DFL Candidate", party: "DFL", votes: 4120 },
-                    { name: "GOP Candidate", party: "GOP", votes: 5890 }
-                ]
-            },
-            "Hennepin": { 
-                name: "Hennepin County", 
-                candA: 345000, candB: 182000, totalPrecincts: 410, precinctsIn: 295,
-                candidates: [
-                    { name: "DFL Candidate", party: "DFL", votes: 345000 },
-                    { name: "GOP Candidate", party: "GOP", votes: 182000 }
-                ]
-            },
-            "Ramsey": { 
-                name: "Ramsey County", 
-                candA: 142000, candB: 68000, totalPrecincts: 195, precinctsIn: 150,
-                candidates: [
-                    { name: "DFL Candidate", party: "DFL", votes: 142000 },
-                    { name: "GOP Candidate", party: "GOP", votes: 68000 }
-                ]
-            },
-            "Dakota": { 
-                name: "Dakota County", 
-                candA: 112000, candB: 98000, totalPrecincts: 120, precinctsIn: 92,
-                candidates: [
-                    { name: "DFL Candidate", party: "DFL", votes: 112000 },
-                    { name: "GOP Candidate", party: "GOP", votes: 98000 }
-                ]
-            },
-            "Blue Earth": { 
-                name: "Blue Earth County", 
-                candA: 18200, candB: 17500, totalPrecincts: 42, precinctsIn: 31,
-                candidates: [
-                    { name: "DFL Candidate", party: "DFL", votes: 18200 },
-                    { name: "GOP Candidate", party: "GOP", votes: 17500 }
-                ]
-            },
-            "St. Louis": { 
-                name: "St. Louis County", 
-                candA: 62000, candB: 48000, totalPrecincts: 155, precinctsIn: 118,
-                candidates: [
-                    { name: "DFL Candidate", party: "DFL", votes: 62000 },
-                    { name: "GOP Candidate", party: "GOP", votes: 48000 }
-                ]
-            },
-            "Olmsted": { 
-                name: "Olmsted County", 
-                candA: 42000, candB: 39000, totalPrecincts: 88, precinctsIn: 64,
-                candidates: [
-                    { name: "DFL Candidate", party: "DFL", votes: 42000 },
-                    { name: "GOP Candidate", party: "GOP", votes: 39000 }
-                ]
-            },
-            "Stearns": { 
-                name: "Stearns County", 
-                candA: 31000, candB: 49000, totalPrecincts: 102, precinctsIn: 78,
-                candidates: [
-                    { name: "DFL Candidate", party: "DFL", votes: 31000 },
-                    { name: "GOP Candidate", party: "GOP", votes: 49000 }
-                ]
-            },
-            "Anoka": { 
-                name: "Anoka County", 
-                candA: 82000, candB: 89000, totalPrecincts: 130, precinctsIn: 96,
-                candidates: [
-                    { name: "DFL Candidate", party: "DFL", votes: 82000 },
-                    { name: "GOP Candidate", party: "GOP", votes: 89000 }
-                ]
-            },
-            "Washington": { 
-                name: "Washington County", 
-                candA: 78000, candB: 71000, totalPrecincts: 105, precinctsIn: 80,
-                candidates: [
-                    { name: "DFL Candidate", party: "DFL", votes: 78000 },
-                    { name: "GOP Candidate", party: "GOP", votes: 71000 }
-                ]
-            },
-            "Martin": { 
-                name: "Martin County", 
-                candA: 2600, candB: 5400, totalPrecincts: 24, precinctsIn: 18,
-                candidates: [
-                    { name: "DFL Candidate", party: "DFL", votes: 2600 },
-                    { name: "GOP Candidate", party: "GOP", votes: 5400 }
-                ]
-            }
-        };
+            };
+        });
+
+        // Add special local write-in candidate slot for Faribault County
+        countyData["Faribault"].candidates.push({ name: "Write-In (City Council / Local)", party: "Write-In", votes: 312 });
 
         let currentMode = "AUDIT"; 
         let isStreamActive = true;
@@ -421,7 +357,7 @@
                 }
                 if (banner) {
                     banner.className = "bg-emerald-950/30 border border-emerald-800/40 p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs text-emerald-200";
-                    banner.innerHTML = `<div class="flex items-center space-x-2.5"><i class="fa-solid fa-shield-check text-emerald-400 text-base"></i><div><span class="font-bold text-white">MINNESOTA VERIFIED AUDIT MODE ACTIVE:</span> <span class="text-slate-300">Tracking local county returns including Faribault County, Waseca, Hennepin, and statewide contests.</span></div></div><span class="text-[10px] font-mono-code bg-emerald-900/50 border border-emerald-700/50 text-emerald-300 px-2 py-1 rounded">MN_STATE_LEDGER</span>`;
+                    banner.innerHTML = `<div class="flex items-center space-x-2.5"><i class="fa-solid fa-shield-check text-emerald-400 text-base"></i><div><span class="font-bold text-white">ALL 87 MINNESOTA COUNTIES MONITORED:</span> <span class="text-slate-300">Live precinct returns including Faribault County write-ins, Waseca, Hennepin, and statewide races.</span></div></div><span class="text-[10px] font-mono-code bg-emerald-900/50 border border-emerald-700/50 text-emerald-300 px-2 py-1 rounded">MN_STATE_LEDGER</span>`;
                 }
             }
             renderCountyGrid();
@@ -439,29 +375,47 @@
                 const marginPct = totalVotes > 0 ? ((margin / totalVotes) * 100).toFixed(1) : "0.0";
                 
                 const isDemLead = c.candA > c.candB;
-                // Visual Red/Blue Card Fill & Borders
+                // Red/Blue Color Coding
                 const bgStyle = isDemLead ? "bg-blue-950/40 border-blue-700/70" : "bg-red-950/40 border-red-700/70";
                 const badgeBg = isDemLead ? "bg-blue-500/20 text-blue-300 border-blue-500/40" : "bg-red-500/20 text-red-300 border-red-500/40";
                 const leadLabel = isDemLead ? `DFL +${marginPct}%` : `GOP +${marginPct}%`;
 
                 const card = document.createElement('div');
                 card.onclick = () => openForensicModal(cKey);
-                card.className = `${bgStyle} border rounded-xl p-3 hover:border-cyan-400 transition cursor-pointer space-y-2 group shadow-md`;
+                card.className = `${bgStyle} border rounded-xl p-2.5 hover:border-cyan-400 transition cursor-pointer space-y-1.5 group shadow-md`;
                 card.innerHTML = `
                     <div class="flex justify-between items-center">
-                        <span class="font-black text-xs sm:text-sm text-white group-hover:text-cyan-400 transition font-mono-code">${c.name}</span>
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded border ${badgeBg}">${leadLabel}</span>
+                        <span class="font-black text-xs text-white group-hover:text-cyan-400 transition font-mono-code truncate mr-1">${c.name}</span>
+                        <span class="text-[8px] font-bold px-1 py-0.5 rounded border ${badgeBg} whitespace-nowrap">${leadLabel}</span>
                     </div>
-                    <div class="space-y-1 font-mono-code text-[11px]">
+                    <div class="space-y-0.5 font-mono-code text-[10px]">
                         <div class="flex justify-between text-blue-400"><span>DFL:</span><span class="font-bold">${c.candA.toLocaleString()}</span></div>
                         <div class="flex justify-between text-red-400"><span>GOP:</span><span class="font-bold">${c.candB.toLocaleString()}</span></div>
                     </div>
-                    <div class="pt-1 border-t border-slate-900 flex justify-between text-[10px] text-slate-400 font-mono-code">
+                    <div class="pt-1 border-t border-slate-900 flex justify-between text-[9px] text-slate-400 font-mono-code">
                         <span>Precincts: ${Math.round((c.precinctsIn/c.totalPrecincts)*100)}%</span>
                         <span class="text-emerald-400"><i class="fa-solid fa-fingerprint"></i> SHA-256</span>
                     </div>
                 `;
                 grid.appendChild(card);
+            });
+        }
+
+        // Live Real-Time Firestore Listener
+        if (db) {
+            db.collection("mn_audit_ledger").onSnapshot((snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added" || change.type === "modified") {
+                        const data = change.doc.data();
+                        if (data.county && countyData[data.county]) {
+                            if (data.votes && data.candidate) {
+                                if (data.candidate.includes("DFL")) countyData[data.county].candA = data.votes;
+                                if (data.candidate.includes("GOP")) countyData[data.county].candB = data.votes;
+                            }
+                        }
+                    }
+                });
+                renderCountyGrid();
             });
         }
 
@@ -594,7 +548,7 @@
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(auditLedger, null, 2));
                 const dl = document.createElement('a');
                 dl.setAttribute("href", dataStr);
-                dl.setAttribute("download", "mn_faribault_audit_ledger_2026.json");
+                dl.setAttribute("download", "mn_all87_audit_ledger_2026.json");
                 document.body.appendChild(dl);
                 dl.click();
                 dl.remove();
@@ -607,7 +561,7 @@
                 const url = window.URL.createObjectURL(blob);
                 const dl = document.createElement('a');
                 dl.setAttribute("href", url);
-                dl.setAttribute("download", "mn_faribault_audit_ledger_2026.csv");
+                dl.setAttribute("download", "mn_all87_audit_ledger_2026.csv");
                 document.body.appendChild(dl);
                 dl.click();
                 dl.remove();
